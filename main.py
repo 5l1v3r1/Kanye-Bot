@@ -20,4 +20,4 @@ async def on_message(message):
         sys.exit()
 
 
-client.run('NjkyNTc2MTcxOTAwMTQxNTk4.Xnwk-w.3uBGgDEIGKfilvdotEJwOnH-eIw')
+client.run('token_here')
