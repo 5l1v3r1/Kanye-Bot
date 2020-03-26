@@ -2,6 +2,7 @@
 ### Python discord bot for all things Kanye West, because why not.
 
 **To-Do Checklist**
+(:white_check_mark: = Done | :x: = Not finished)
   - Music player
     - Simple syntax to be able to easily play specific albums quickly
     - Lyrcis scrapped from either google or genius
