@@ -9,3 +9,4 @@
   - :x: Kanye pictures for certain moods, ex '!kanye sad' or '!ye happy"
   - :x: Kanye qoutes on command
   
+![](KanyeBot1.gif)
