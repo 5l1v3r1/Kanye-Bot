@@ -6,7 +6,9 @@
   - :x: Music player 
     - Simple syntax to be able to easily play specific albums quickly
     - Lyrcis scrapped from either google or genius
+  - :white_check_mark: Scrape r/Kanye subreddit top posts and send them in channel
   - :x: Kanye pictures for certain moods, ex '!kanye sad' or '!ye happy"
+  - :white_check_mark: Random kanye gif from tenor using their api
   - :x: Kanye qoutes on command
   
 ![](KanyeBot1.gif)
