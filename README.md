@@ -9,6 +9,6 @@
   - :white_check_mark: Scrape r/Kanye subreddit top posts and send them in channel
   - :x: Kanye pictures for certain moods, ex '!kanye sad' or '!ye happy"
   - :white_check_mark: Random kanye gif from tenor using their api
-  - :x: Kanye qoutes on command
+  - :white_check_mark: Kanye qoutes on command
   
-![](GIFS/KanyeBot1.gif)
+![](HELPERS/KanyeBot1.gif)
