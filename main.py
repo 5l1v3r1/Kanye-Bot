@@ -1,93 +1,77 @@
-import json
-import os
-
 import discord
-from pip._vendor import requests
-from Embeds.Embeds import embed_help
-import random
-from SRC.reddit import gather_post_info, upvotes, titles, pictures, links
 
+from random import random
+from discord.ext import commands
+from Embeds.Embeds import embed_help
+from SRC.reddit import gather_post_info, upvotes, titles, pictures, links
+from SRC.utilites import get_gif, get_random_gif, output_random_quote
 
 gif_api_key = "89HJRRKY8549"
-client = discord.Client()
-syntax = '!ye '
+client = commands.Bot(command_prefix="!ye ")
+client.remove_command("help")
 list_of_commands = [['help', "Shows list of commands"],
-                   ['play {album] or {link} or {song}', "Plays the desired song/album"],
-                   ['gif', "Shows random Kanye gif"],
-                   ['subreddit', "Shows top 5 r/Kanye posts"],
-                   ['quote', "Shows random quote"],
-                   ['god', "Shows random Kanye god gif"],
-                   ['kobe', "Shows legendary Kanye + Kobe video"]]
+                    ['play {album] or {link} or {song}', "Plays the desired song/album"],
+                    ['gif', "Shows random Kanye gif"],
+                    ['subreddit', "Shows top 5 r/Kanye posts"],
+                    ['quote', "Shows random quote"],
+                    ['god', "Shows random Kanye god gif"],
+                    ['kobe', "Shows legendary Kanye + Kobe video"]]
 
 
-def format_command(command):
-    return f'{syntax}' + command
+@client.command()
+async def help(ctx):
+    await ctx.send(embed=embed_help(list_of_commands))
 
 
-def get_gif(name):
-    pos = "6"
-    r = requests.get("https://api.tenor.com/v1/search?q=%s&key=%s&pos=%s&limit=%s" % (name, gif_api_key, pos, 1))
-    if r.status_code == 200:
-        return json.loads(r.content)
+@client.command()
+async def play(ctx):
+    pass
 
 
-def get_random_gif():
-    pos = str(random.randint(0, 100))
-    good_pos = False
-    while not good_pos:
-        if pos == 99 or pos == 100 or pos == 50:
-            pos = str(random.randint(0, 100))
+@client.command()
+async def gif(ctx):
+    list = get_random_gif()
+    for response in list['results']:
+        await ctx.send(response["url"])
+
+
+@client.command()
+async def subreddit(ctx):
+    await ctx.send(f"One moment {ctx.author}")
+    gather_post_info()
+    index = 0
+    while index < 5:
+        embed = discord.Embed(color=0xff0000)
+        if index == 4:
+            embed.set_image(url="https://thumbs.gfycat.com/HatefulClutteredIrishwolfhound-size_restricted.gif")
         else:
-            good_pos = True
+            embed.set_image(url=pictures[index])
+        embed.add_field(name=f"#{index + 1}  -  <:upvote:692958740865089536> {upvotes[index]} Upvotes",
+                        value=f"[{titles[index]}]({links[index]})", inline=False)
+        await ctx.send(embed=embed)
+        index += 1
 
-    r = requests.get("https://api.tenor.com/v1/search?q=%s&key=%s&pos=%s&limit=%s" % ("kanye", gif_api_key, pos, 1))
-    if r.status_code == 200:
-        return json.loads(r.content)
+
+@client.command()
+async def quote(ctx):
+    random_quote = output_random_quote()[random.randint(0, 25)]
+    await ctx.send("\"" + random_quote.strip("\n") + "\"")
 
 
-def output_random_quote():
-    with open("HELPERS/Quotes.txt", "r") as file:
-        list = []
-        for line in file:
-            list.append(line)
-        return list
+@client.command()
+async def god(ctx):
+    await ctx.send("https://tenor.com/view/kanye-agod-iam-agod-kanye-west-conceited-gif-5313292")
+
+
+@client.command()
+async def kobe(ctx):
+    await ctx.send("https://youtu.be/uxgHmbM3Ig0")
 
 
 @client.event
 async def on_ready():
     print("The bot is ready!")
-    await client.change_presence(activity=discord.Game(name='Testing'))
+    await client.change_presence(activity=discord.Game(name='Listening to YEEZUS'))
 
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    elif message.content == syntax.replace(" ", "") or message.content == format_command('help'):
-        await message.channel.send(embed=embed_help(list_of_commands))
-    elif message.content == format_command('gif'):
-        list = get_random_gif()
-        for response in list['results']:
-            await message.channel.send(response["url"])
-    elif message.content == format_command('subreddit'):
-        await message.channel.send(f"One moment {message.author}.")
-        gather_post_info()
-        index = 0
-        while index < 5:
-            embed = discord.Embed(color=0xff0000)
-            if index == 4:
-                embed.set_image(url="https://thumbs.gfycat.com/HatefulClutteredIrishwolfhound-size_restricted.gif")
-            else:
-                embed.set_image(url=pictures[index])
-            embed.add_field(name=f"#{index+1}  -  <:upvote:692958740865089536> {upvotes[index]} Upvotes", value=f"[{titles[index]}]({links[index]})", inline=False)
-            await message.channel.send(embed=embed)
-            index += 1
-    elif message.content == format_command('quote'):
-        random_quote = output_random_quote()[random.randint(0, 25)]
-        await message.channel.send("\""+random_quote.strip("\n")+"\"")
-    elif message.content == format_command('god'):
-        await message.channel.send("https://tenor.com/view/kanye-agod-iam-agod-kanye-west-conceited-gif-5313292")
-    elif message.content == format_command('kobe'):
-        await message.channel.send("https://youtu.be/uxgHmbM3Ig0")
-
-client.run('NjkyNTc2MTcxOTAwMTQxNTk4.Xn5hyw.r-i0kS3APB-2kuAovk8Ai7gKcFY')
+client.run('NjkyNTc2MTcxOTAwMTQxNTk4.Xn-F3Q.ydOaSVU-5N2nl5bO6PJOGTPN3j8')
