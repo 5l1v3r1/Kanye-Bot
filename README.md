@@ -11,4 +11,4 @@
   - :white_check_mark: Random kanye gif from tenor using their api
   - :x: Kanye qoutes on command
   
-![](GIFS/KanyeBot1.gif)
+![](HELPERS/KanyeBot1.gif)
