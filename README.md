@@ -10,5 +10,6 @@
   - :x: Kanye pictures for certain moods, ex '!kanye sad' or '!ye happy"
   - :white_check_mark: Random kanye gif from tenor using their api
   - :white_check_mark: Kanye qoutes on command
+  - :white_check_mark: Automated status changing to kanye albums
   
 ![](HELPERS/KanyeBot1.gif)
