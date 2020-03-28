@@ -12,4 +12,8 @@
   - :white_check_mark: Kanye qoutes on command
   - :white_check_mark: Automated status changing to kanye albums
   
+**Bugs**
+  - In the subreddit scrapper if the 5th post is a video beatiful soup will not be able to find it for some reason
+    - I tried debugging it for a long time and couldnt figure out the issue. So it will show a error kanye gif in place of the video
+
 ![](HELPERS/KanyeBot1.gif)
