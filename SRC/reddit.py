@@ -32,10 +32,13 @@ def gather_post_info():
         possible_video_div = container.find("video", attrs={"class": "_1EQJpXY7ExS04odI1YBBlj"})
         if possible_video_div is not None:
             pictures.append(possible_video_div['poster'])
+        else:
+            if loop == 4:
+                pictures.append("skip")
 
-        titles_div = container.find("img", attrs={"class": "ImageBox-image"})
-        if titles_div is not None:
-            pictures.append(titles_div['src'])
+        possible_image_div = container.find("img", attrs={"class": "ImageBox-image"})
+        if possible_image_div is not None:
+            pictures.append(possible_image_div['src'])
 
         link_div = container.find("a", attrs={"class": "SQnoC3ObvgnGjWt90zD9Z _2INHSNB8V5eaWp4P0rY_mE"})
         if link_div is not None:
