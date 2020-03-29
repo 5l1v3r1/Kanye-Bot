@@ -19,4 +19,6 @@
 ### Pictures + Gifs
 <img src="https://i.imgur.com/iRfiZYu.png"/>
 
+<img src="https://i.imgur.com/PkovK6u.png"/>
+
 ![](HELPERS/KanyeBot1.gif)
