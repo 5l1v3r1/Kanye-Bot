@@ -7,8 +7,6 @@ play_help_embed = discord.Embed(title="Play Help", description=".")
 play_help_embed.add_field(name="song", value="!ye play Saint Pablo", inline=False)
 play_help_embed.add_field(name="album", value="!ye play Graduation", inline=False)
 play_help_embed.add_field(name="url", value="!ye play https://www.youtube.com/watch?v=x-FkJ5FzWgs", inline=False)
-play_help_embed.add_field(name="url", value="!ye play https://www.youtube.com/watch?v=x-FkJ5FzWgs", inline=False)
-play_help_embed.add_field(name="url", value="!ye play https://www.youtube.com/watch?v=x-FkJ5FzWgs", inline=False)
 
 
 def now_playing_embed(title, url):
