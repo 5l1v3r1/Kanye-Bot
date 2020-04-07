@@ -1,7 +1,7 @@
 import discord
 import random
+import os
 
-from discord.utils import get
 from discord.ext import commands, tasks
 from Embeds.Embeds import embed_help
 from SRC.reddit import gather_post_info, upvotes, titles, pictures, links
@@ -18,18 +18,18 @@ list_of_albums = ["college dropout", "collegedropout", "cd", "late registration"
                   "808's and heartbreaks", "808", "808s", "808's", "my beautiful dark twisted fantasy", "mbdtf",
                   "watch the throne", "wth", "yeezus", "the life of pablo", "tlop", "pablo", "ye", "kids see ghosts",
                   "ksg", "jesus is king", "jik", "sunday service", "ss"]
-playlists_of_albums = ["https://www.youtube.com/watch?v=OTZzjAU0Kg0&list=PLeO-rHNGADqzCkDOyEUZbJMnuu5s9yIGh",
-                       "https://www.youtube.com/watch?v=Bwyu-SZ7g_E&list=PLRNstPwi0r8dhdTBkA7iNXRaG_yynueP7",
-                       "https://www.youtube.com/watch?v=JRnp5nwnkgI&list=PLXR4OlatIg5Fpc8HaoBlznnCGXMVJC9Ql",
-                       "https://www.youtube.com/watch?v=d9BMPmfxaoM&list=PLX68ZEYlh74tpCb5sOXP98ito6DhP60-t",
-                       "https://www.youtube.com/watch?v=UTH1VNHLjng&list=PLzMq4yH_FvVa5kPgtKmgdzPssfmBUtO2C",
-                       "https://www.youtube.com/watch?v=FJt7gNi3Nr4&list=PLTI4-CRTcbtZup8J0WdvJm-JMgMJhnnOb",
-                       "https://www.youtube.com/watch?v=uU9Fe-WXew4&list=PLzMq4yH_FvVaV0uPkc_Quj3PaXnpouNld",
-                       "https://www.youtube.com/watch?v=6oHdAA3AqnE&list=PLzMq4yH_FvVac_1R0DMcMkcwnJ1-hFx6b",
-                       "https://www.youtube.com/watch?v=2SeVgStQ5T0&list=PLAUxsgLNM2Bt8apMzywvdzOJSzlfW4OQa",
-                       "https://www.youtube.com/watch?v=rnZQvgWhM5s&list=PLzMq4yH_FvVaq5TFtfCDs6FxWef45gyHW",
-                       "https://www.youtube.com/watch?v=T58tRXzjC7c&list=PL5Z-QTr_hR1gTIk7T-bPCmRaaXNmiP3aK",
-                       "https://www.youtube.com/watch?v=2Czs7fl1r7c&list=PLcllBDpP7V-_NOCf4wbYTbh4VUsObhNyo"]
+playlists_of_albums = ["https://www.youtube.com/watch?v=OTZzjAU0Kg0&list=PLeO-rHNGADqzCkDOyEUZbJMnuu5s9yIGh", # cd
+                       "https://www.youtube.com/watch?v=Bwyu-SZ7g_E&list=PLRNstPwi0r8dhdTBkA7iNXRaG_yynueP7", # lr
+                       "https://www.youtube.com/watch?v=JRnp5nwnkgI&list=PLXR4OlatIg5Fpc8HaoBlznnCGXMVJC9Ql", # grad
+                       "https://www.youtube.com/watch?v=d9BMPmfxaoM&list=PLX68ZEYlh74tpCb5sOXP98ito6DhP60-t", # 808
+                       "https://www.youtube.com/watch?v=UTH1VNHLjng&list=PLzMq4yH_FvVa5kPgtKmgdzPssfmBUtO2C", # mbdtf
+                       "https://www.youtube.com/watch?v=FJt7gNi3Nr4&list=PLTI4-CRTcbtZup8J0WdvJm-JMgMJhnnOb", # wth
+                       "https://www.youtube.com/watch?v=uU9Fe-WXew4&list=PLzMq4yH_FvVaV0uPkc_Quj3PaXnpouNld", # yeezus
+                       "https://www.youtube.com/watch?v=6oHdAA3AqnE&list=PLzMq4yH_FvVac_1R0DMcMkcwnJ1-hFx6b", # tlop
+                       "https://www.youtube.com/watch?v=2SeVgStQ5T0&list=PLAUxsgLNM2Bt8apMzywvdzOJSzlfW4OQa", # ye
+                       "https://www.youtube.com/watch?v=rnZQvgWhM5s&list=PLzMq4yH_FvVaq5TFtfCDs6FxWef45gyHW", # ksg
+                       "https://www.youtube.com/watch?v=T58tRXzjC7c&list=PL5Z-QTr_hR1gTIk7T-bPCmRaaXNmiP3aK", # jik
+                       "https://www.youtube.com/watch?v=2Czs7fl1r7c&list=PLcllBDpP7V-_NOCf4wbYTbh4VUsObhNyo"] # ss
 server_players = {}
 list_of_commands = [['help', "Shows list of commands"],
                     ['play {album] or {link} or {song}', "Plays the desired song/album"],
@@ -84,55 +84,68 @@ async def resume(ctx):
 
 @client.command(pass_context=True)
 async def play(ctx, *, source=None, channel: discord.VoiceChannel = None):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+
     if not channel and not ctx.author.voice:
         await ctx.send("Your not in a voice channel!")
-    else:
-        if not source:
-            await ctx.send("No song/album/url specified!", embed=play_help_embed)
-        else:
-            if source.find("https") != -1:
-                source = source
-            elif source in list_of_albums:
-                index = list_of_albums.index(source)
-                if index < 3:
-                    source = playlists_of_albums[0]
-                elif index < 6:  # college dropout
-                    source = playlists_of_albums[1]
-                elif index < 8:  # late regestraration
-                    source = playlists_of_albums[2]
-                elif index < 15:  # graduation
-                    source = playlists_of_albums[3]
-                elif index < 15:  # 808's
-                    source = playlists_of_albums[4]
-                elif index < 17:  # MBDTF
-                    source = playlists_of_albums[5]
-                elif index < 19:  # Watch the throne
-                    source = playlists_of_albums[6]
-                elif index < 20:  # yeezus
-                    source = playlists_of_albums[7]
-                elif index < 23:  # tlop
-                    source = playlists_of_albums[8]
-                elif index < 24:  # ye
-                    source = playlists_of_albums[9]
-                elif index < 26:  # ksg
-                    source = playlists_of_albums[10]
-                elif index < 28:  # jesus is king
-                    source = playlists_of_albums[11]
-                elif index < 30:  # sunday service
-                    source = playlists_of_albums[12]
-                else:
-                    return
+    elif voice_channel and voice_channel.is_connected():
 
-            url = source
-            destination = channel or ctx.author.voice.channel
-            await destination.connect()
-            server = ctx.message.guild
-            voice_channel = server.voice_client
-            async with ctx.typing():
-                player = await YTDLSource.from_url(source, loop=client.loop)
-                server_players[server.id] = player
-                voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-            await ctx.send(embed=now_playing_embed(player.title, url))
+
+    if not source:
+        await ctx.send("No song/album/url specified!", embed=play_help_embed)
+    else:
+        if source.find("https") != -1:
+            source = source
+        elif source.to_lower() in list_of_albums:
+            index = list_of_albums.index(source)
+            if index < 3:  # college dropout
+                source = playlists_of_albums[0]
+            elif index < 6: # lr
+                source = playlists_of_albums[1]
+            elif index < 8:  # grad
+                source = playlists_of_albums[2]
+            elif index < 15:  # 808
+                source = playlists_of_albums[3]
+            elif index < 17:  # mbdtf
+                source = playlists_of_albums[4]
+            elif index < 19:  # wth
+                source = playlists_of_albums[5]
+            elif index < 20:  # yeezus
+                source = playlists_of_albums[6]
+            elif index < 23:  # tlop
+                source = playlists_of_albums[7]
+            elif index < 24:  # ye
+                source = playlists_of_albums[8]
+            elif index < 26:  # ksg
+                source = playlists_of_albums[9]
+            elif index < 28:  # jik
+                source = playlists_of_albums[10]
+            elif index < 30:  # ss
+                source = playlists_of_albums[11]
+            else:
+                return
+
+        song_is_there = os.path.isfile("song.mp3")
+        if song_is_there:
+            try:
+                os.remove("song.mp3")
+            except PermissionError:
+                pass
+
+        url = source
+        destination = channel or ctx.author.voice.channel
+        await destination.connect()
+
+        async with ctx.typing():
+            player = await YTDLSource.from_url(source, loop=client.loop)
+            server_players[server.id] = player
+            voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+        await ctx.send(embed=now_playing_embed(player.title, url))
+
+        for file in os.listdir("./"):
+            if file.endswith(".mp3"):
+                os.rename(file, "song.mp3")
 
 
 @client.command(pass_context=True)
