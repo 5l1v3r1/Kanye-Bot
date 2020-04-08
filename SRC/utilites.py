@@ -2,8 +2,8 @@ import json
 import random
 
 from pip._vendor import requests
-gif_api_key = "47GQTCO6W90R"
 
+gif_api_key = "47GQTCO6W90R"
 
 def get_gif(name):
     pos = "6"

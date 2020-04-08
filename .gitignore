@@ -108,3 +108,7 @@ idea.bak/
 
 # mypy
 .mypy_cache/
+
+# token file
+HELPERS/TOKEN.txt
+.WEBM
