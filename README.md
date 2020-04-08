@@ -1,6 +1,9 @@
 # Kanye-Bot
 ### Python discord bot for all things Kanye West, because why not.
 
+**If you want to invite to your discord server**
+https://discordapp.com/api/oauth2/authorize?client_id=696916692353155164&permissions=8&scope=bot
+
 **To-Do Checklist**
 (:white_check_mark: = Done | :x: = Not finished)
   - :white_check_mark: Music player 
