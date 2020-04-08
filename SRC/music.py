@@ -5,6 +5,8 @@ import youtube_dl
 
 from discord.utils import get
 
+from SRC.utilites import get_random_gif
+
 list_of_albums = ["college dropout", "collegedropout", "cd", "late registration", "lateregistration", "lr",
                   "graduation", "gr", "808s & heartbreaks", "808s and heartbreaks", "808's & heartbreaks",
                   "808's and heartbreaks", "808", "808s", "808's", "my beautiful dark twisted fantasy", "mbdtf",
@@ -129,9 +131,10 @@ class YTDLSource(discord.PCMVolumeTransformer):
                                 Music().server_file_names.append(file)
                     else:
                         print(player.title)
-                        await Music().add_to_queue_player(player=player, ctx=ctx)
+                        await Music().add_to_queue_player(player=player, ctx=ctx, show_message=False)
                     index += 1
-
+                await ctx.send(embed=Music().now_queued_embed(f"Now adding to queue {index+1} songs"))
+                print(f"Now adding to queue {index+1} songs")
 
 class Music:
     server_music = {None: {'voice': None, 'players': []}}
@@ -150,10 +153,11 @@ class Music:
         print(f"Adding to queue: {player.title}")
 
     @classmethod
-    async def add_to_queue_player(cls, ctx, player):
+    async def add_to_queue_player(cls, ctx, player, show_message):
         cls.server_music[ctx.message.guild.id]['players'].append(player)
-        await ctx.send(embed=cls.now_queued_embed(player.title))
-        print(f"Adding to queue: {player.title}")
+        if show_message:
+            await ctx.send(embed=cls.now_queued_embed(player.title))
+            print(f"Adding to queue: {player.title}")
 
     @classmethod
     async def skip(cls, ctx):
@@ -173,7 +177,7 @@ class Music:
             # check for queue
             if players:
                 embed = discord.Embed(title="Skipped")
-                embed.set_thumbnail(url="https://media1.tenor.com/images/5eda9424067f6102385cd18e25be01cf/tenor.gif?itemid=5090941")
+                embed.set_thumbnail(url=get_random_gif())
                 # get next player and remove it
                 player = players[0]
                 voice_client.stop()
@@ -195,7 +199,7 @@ class Music:
             else:
                 voice_client.stop()
                 skip_embed = discord.Embed(title=f"Skipped! 0 songs left in queue")
-                skip_embed.set_thumbnail(url="https://media.tenor.com/images/afff18cb3940cd1958dc042f874a2276/tenor.gif")
+                skip_embed.set_thumbnail(url=get_random_gif())
                 await ctx.send(embed=skip_embed)
                 # still remove file
                 try:
@@ -262,13 +266,13 @@ class Music:
     @staticmethod
     def now_playing_embed(title):
         now_playing_embed = discord.Embed(title=f"Now playing: {title}")
-        now_playing_embed.set_thumbnail(url="https://media1.tenor.com/images/dd3cf5e8a120fe1b7b5e1c7f343a1f4e/tenor.gif?itemid=5272489")
+        now_playing_embed.set_thumbnail(url=get_random_gif())
         return now_playing_embed
 
     @staticmethod
     def now_queued_embed(title):
         now_queued_embed = discord.Embed(title=f"Added to queue: {title}")
-        now_queued_embed.set_thumbnail(url="https://media1.tenor.com/images/ba2a1aa852f101d2a0ddf523c876cfbf/tenor.gif?itemid=14908886")
+        now_queued_embed.set_thumbnail(url=get_random_gif())
         return now_queued_embed
 
     @staticmethod
