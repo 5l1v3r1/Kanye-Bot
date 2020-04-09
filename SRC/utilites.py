@@ -22,7 +22,8 @@ def get_random_gif():
             good_pos = True
     r = requests.get("https://api.tenor.com/v1/search?q=%s&key=%s&pos=%s&limit=%s" % ("kanye", gif_api_key, pos, 1))
     if r.status_code == 200:
-        return json.loads(r.content)
+        list = json.loads(r.content)
+        return list['results'][0]['media'][0]['tinygif']['url']
 
 
 def output_random_quote():

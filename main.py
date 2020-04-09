@@ -20,12 +20,15 @@ list_of_status = ["College Dropout", "Late Registration", "Graduation", "808s & 
                   "Sunday Service"]
 list_of_commands = [['help', "Shows list of commands"],
                     ['play {album] or {link} or {song}', "Plays the desired song/album"],
+                    ['skip + or all', "Skips single song in queue or whole queue will 'all'"],
                     ['play help', "Shows help info"],
                     ['gif', "Shows random Kanye gif"],
                     ['subreddit', "Shows top 5 r/Kanye posts"],
                     ['quote', "Shows random quote"],
                     ['god', "Shows random Kanye god gif"],
-                    ['kobe', "Shows legendary Kanye + Kobe video"]]
+                    ['familyfeud', "Shows family feud meme"],
+                    ['kobe', "Shows legendary Kanye + Kobe video"],
+                    ['credits', "credits to the creator :D"]]
 
 
 @tasks.loop(seconds=60)
@@ -68,13 +71,23 @@ async def resume(ctx):
 
 
 @client.command(pass_context=True)
-async def skip(ctx):
-    await Music().skip(ctx)
+async def skip(ctx, *, all=None):
+    print(all)
+    if all is None:
+        await Music().skip(ctx)
+    elif all == "all":
+        await Music().skip(ctx, True)
 
 
 @client.command(pass_context=True)
 async def play(ctx, *, source=None, channel: discord.VoiceChannel = None):
     voice_client = get(client.voice_clients, guild=ctx.message.guild)
+
+    try:
+        if Music().server_music[ctx.message.guild.id] is None:
+            Music().server_music[ctx.message.guild.id] = {'voice': voice_client, 'players': None}
+    except KeyError:
+        Music().server_music[ctx.message.guild.id] = {'voice': voice_client, 'players': None}
 
     # if no channel specified and user is not in voice channel
     if not channel and not ctx.author.voice:
@@ -127,9 +140,7 @@ async def help(ctx):
 
 @client.command(pass_context=True)
 async def gif(ctx):
-    list = get_random_gif()
-    for response in list['results']:
-        await ctx.send(response["url"])
+    await ctx.send(get_random_gif())
 
 
 @client.command(pass_context=True)
@@ -162,7 +173,20 @@ async def god(ctx):
 
 @client.command(pass_context=True)
 async def kobe(ctx):
-    await ctx.send("https://youtu.be/uxgHmbM3Ig0")
+    await ctx.send("https://youtu.be/uxgHmbM3Ig0")\
+
+
+@client.command(pass_context=True)
+async def familyfeud(ctx):
+    await ctx.send("https://www.youtube.com/watch?v=lE_QA6UqNhk")
+
+
+@client.command(pass_context=True)
+async def credits(ctx):
+    embed = discord.Embed(title="The Creator", description="My creator is NMan4#6604, also known as Nick. The source code for this project is publicly available on my Github!")
+    embed.set_author(name="NMan4#6604", url="https://github.com/NMan1/", icon_url = "https://i.imgur.com/IdUFBoP.jpg")
+    embed.add_field(name="Source code:", value="https://github.com/NMan1/Kanye-Bot", inline=True)
+    await ctx.send(embed=embed)
 
 
 @client.event
