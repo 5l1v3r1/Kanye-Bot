@@ -7,7 +7,7 @@ from discord.utils import get
 
 from Embeds.Embeds import embed_help
 from SRC.reddit import gather_post_info, upvotes, titles, pictures, links
-from SRC.utilites import get_gif, get_random_gif, output_random_quote
+from SRC.utilites import get_random_gif, output_random_quote
 from SRC.music import play_help_embed, YTDLSource, Music
 
 music = None

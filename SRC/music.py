@@ -42,8 +42,9 @@ ss = ['https://www.youtube.com/watch?v=2Czs7fl1r7c&amp;list=PLcllBDpP7V-_NOCf4wb
 
 play_help_embed = discord.Embed(title="Play Help", description=".")
 play_help_embed.add_field(name="song", value="!ye play Saint Pablo", inline=False)
-play_help_embed.add_field(name="album", value="!ye play Graduation", inline=False)
+play_help_embed.add_field(name="album", value="!ye play {Album Key}", inline=False)
 play_help_embed.add_field(name="url", value="!ye play https://www.youtube.com/watch?v=x-FkJ5FzWgs", inline=False)
+play_help_embed.add_field(name="Album Keys", value="\"college dropout\", \"collegedropout\", \"cd\", \"late registration\", \"lateregistration\", \"lr\", \"graduation\", \"gr\", \"808s & heartbreaks\", \"808s and heartbreaks\", \"808's & heartbreaks\", \"808's and heartbreaks\", \"808\", \"808s\", \"808's\", \"my beautiful dark twisted fantasy\", \"mbdtf\", \"watch the throne\", \"wtt\", \"yeezus\", \"the life of pablo\", \"tlop\", \"pablo\", \"ye\", \"kids see ghosts\", \"ksg\", \"jesus is king\", \"jik\", \"sunday service\", \"ss\"\"", inline=False)
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -290,13 +291,12 @@ class Music:
                 return jik
             elif index < 30:  # ss
                 return ss
-            else:
-                return input
         else:
             temp_input = input.lower()
             if temp_input.find("ye") or temp_input.find("kanye") or temp_input.find("west") or temp_input.find("kanye west") or temp_input.find("west kanye") or temp_input.find("kanyewest") or temp_input.find("westkanye"):
                 return input
             else:
                 input += " kanye west"
+                print(f"Given Song: {input}", flush=True)
                 return input
 
