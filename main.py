@@ -1,5 +1,3 @@
-from asyncio import create_task
-
 import discord
 import random
 import os
@@ -28,6 +26,7 @@ list_of_commands = [['help', "Shows list of commands"],
                     ['god', "Shows random Kanye god gif"],
                     ['familyfeud', "Shows family feud meme"],
                     ['kobe', "Shows legendary Kanye + Kobe video"],
+                    ['thicc', 'Take a guess?'],
                     ['credits', "credits to the creator :D"]]
 
 
@@ -72,7 +71,6 @@ async def resume(ctx):
 
 @client.command(pass_context=True)
 async def skip(ctx, *, all=None):
-    print(all)
     if all is None:
         await Music().skip(ctx)
     elif all == "all":
@@ -182,6 +180,11 @@ async def familyfeud(ctx):
 
 
 @client.command(pass_context=True)
+async def thicc(ctx):
+    await ctx.send("https://gfycat.com/kindheartedgiantemperorshrimp")
+
+
+@client.command(pass_context=True)
 async def credits(ctx):
     embed = discord.Embed(title="The Creator", description="My creator is NMan4#6604, also known as Nick. The source code for this project is publicly available on my Github!")
     embed.set_author(name="NMan4#6604", url="https://github.com/NMan1/", icon_url = "https://i.imgur.com/IdUFBoP.jpg")
@@ -191,11 +194,10 @@ async def credits(ctx):
 
 @client.event
 async def on_ready():
-    print("The bot is ready!")
+    print("The bot is ready!", flush=True)
     change_status.start()
 
 
 if __name__ == '__main__':
     Music().initialize_client(client)
-    with open("./HELPERS/TOKEN.txt", "r") as file:
-        client.run(file.readline())
+    client.run("TOKEN HERE")
