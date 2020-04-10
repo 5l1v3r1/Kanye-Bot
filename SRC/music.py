@@ -97,7 +97,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                     await Music().add_to_queue_player(player=player, ctx=ctx, show_message=False)
                 index += 1
             await ctx.send(embed=Music().now_queued_embed(f"{index + 1} songs"))
-            print(f"Now adding to queue {index + 1} songs")
+            print(f"Now adding to queue {index + 1} songs", flush=True)
             return None
         else:
             # Play song name or song link
@@ -122,14 +122,14 @@ class Music:
         player = await YTDLSource.from_url(url, loop=cls.client.loop)
         cls.server_music[ctx.message.guild.id]['players'].append(player)
         await ctx.send(embed=cls.now_queued_embed(player.title))
-        print(f"Adding to queue: {player.title}")
+        print(f"Adding to queue: {player.title}", flush=True)
 
     @classmethod
     async def add_to_queue_player(cls, ctx, player, show_message):
         cls.server_music[ctx.message.guild.id]['players'].append(player)
         if show_message:
             await ctx.send(embed=cls.now_queued_embed(player.title))
-            print(f"Adding to queue: {player.title}")
+            print(f"Adding to queue: {player.title}", flush=True)
 
     @classmethod
     async def skip(cls, ctx, skip_all=False):
@@ -146,7 +146,7 @@ class Music:
                 players.pop(0)
             except IndexError:
                 pass
-        print("Hio")
+
         # if connected
         if voice_client or voice_client.is_connected():
             # check for queue
