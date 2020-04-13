@@ -79,6 +79,10 @@ async def skip(ctx, *, all=None):
 
 @client.command(pass_context=True)
 async def play(ctx, *, source=None, channel: discord.VoiceChannel = None):
+    if source == "help":
+        await ctx.send("No song/album/url specified!", embed=play_help_embed)
+        return
+
     voice_client = get(client.voice_clients, guild=ctx.message.guild)
 
     try:
@@ -200,4 +204,4 @@ async def on_ready():
 
 if __name__ == '__main__':
     Music().initialize_client(client)
-    client.run("TOKEN HERE")
+    client.run("Njk2OTE2NjkyMzUzMTU1MTY0.XpC7XQ.2CqlGiO7qivSGWEWQ3P08nGZhSY")

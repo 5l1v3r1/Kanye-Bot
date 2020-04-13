@@ -27,7 +27,7 @@ def get_random_gif():
 
 
 def output_random_quote():
-    with open("HELPERS/Quotes.txt", "r") as file:
+    with open("./HELPERS/Quotes.txt", "r") as file:
         list = []
         for line in file:
             list.append(line)

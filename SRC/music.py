@@ -86,7 +86,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 try:
                     data = await loop.run_in_executor(None, lambda: ytdl.extract_info(link, download=not stream))
                 except DownloadError:
-                    return
+                    continue
 
                 filename = data['url'] if stream else ytdl.prepare_filename(data)
                 player = cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
@@ -99,11 +99,12 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 else:
                     await Music().add_to_queue_player(player=player, ctx=ctx, show_message=False)
                 index += 1
-            await ctx.send(embed=Music().now_queued_embed(f"{index + 1} songs"))
-            print(f"Now adding to queue {index + 1} songs")
+            await ctx.send(embed=Music().now_queued_embed(f"{index} songs"))
+            print(f"Now adding to queue {index} songs")
             for file in os.listdir("./"):
                 if file.endswith(".webm") or file.endswith(".m4a"):
                     Music().server_file_names.append(file)
+            print(Music().server_file_name)
             print(f"Now adding to queue {index + 1} songs", flush=True)
             return None
         else:
@@ -160,15 +161,11 @@ class Music:
             if players:
                 embed = discord.Embed(title="Skipped")
                 embed.set_thumbnail(url=get_random_gif())
+                await ctx.send(embed=embed)
                 # get next player and remove it
-                try:
-                    player = players[0]
-                except KeyError:
-                    pass
-                else:
-                    voice_client.stop()
-                    voice_client.play(player, after=lambda e: cls.client.loop.create_task(cls.play_next_song(ctx)))
-                    await ctx.send(embed=cls.now_playing_embed(players[0].title))
+                voice_client.stop()
+                #voice_client.play(player, after=lambda e: cls.client.loop.create_task(cls.play_next_song(ctx)))
+                #await ctx.send(embed=cls.now_playing_embed(player.title))
 
                 # remove song from folder
                 song_is_there = os.path.isfile(cls.server_file_names[0])
@@ -198,6 +195,9 @@ class Music:
                         os.remove(name)
                     except PermissionError:
                         pass
+                for file in os.listdir("./"):
+                    if file.endswith(".webm") or file.endswith(".m4a"):
+                        os.remove(file)
         else:
             await ctx.send("Im not playing any music!")
 
@@ -211,12 +211,12 @@ class Music:
 
         try:
             players.pop(0)
+            player = players[0]
         except IndexError:
             pass
 
         # check if queue is populated
         if players:
-            player = players[0]
             try:
                 voice_client.play(player, after=lambda e: cls.client.loop.create_task(cls.play_next_song(ctx)))
             except discord.ClientException:  # Caused because this is called after the song is skipped but the skipped func already plays
